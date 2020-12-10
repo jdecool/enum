@@ -1,6 +1,9 @@
 Enum
 ====
 
+[![Build Status](https://github.com/jdecool/enum/workflows/CI/badge.svg)](https://github.com/jdecool/enum/actions?query=workflow%3ACI)
+[![Latest Stable Version](https://poser.pugx.org/jdecool/enum/v/stable.png)](https://packagist.org/packages/jdecool/enum)
+
 An another Enum implementation for PHP.
 
 ## Why ?
