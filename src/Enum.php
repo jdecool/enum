@@ -4,20 +4,56 @@ declare(strict_types=1);
 
 namespace JDecool\Enum;
 
+use BackedEnum;
 use InvalidArgumentException;
 use LogicException;
 use ReflectionClass;
+use ValueError;
 use function array_search;
 
-abstract class Enum
+abstract class Enum implements BackedEnum
 {
     private static array $cache = [];
     private static array $instances = [];
 
-    private string|int|float $value;
+    public string $name;
+    public string $value;
 
+    private string|int|float $internalValue;
+
+    public static function from(int|string $scalar): static
+    {
+        try {
+            return self::of($scalar);
+        } catch (InvalidArgumentException $e) {
+            throw new ValueError($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    public static function tryFrom(int|string $scalar): ?static
+    {
+        try {
+            return self::of($scalar);
+        } catch (InvalidArgumentException $e) {
+            return null;
+        }
+    }
+
+    /**
+     * @return static[]
+     */
+    public static function cases(): array
+    {
+        return array_values(static::values());
+    }
+
+    /**
+     * @deprecated use Enum::from instead
+     */
     public static function of(string|int|float $value): static
     {
+        @trigger_error('The Enum::of method is deprecated, use Enum::from instead.', \E_USER_DEPRECATED);
+
         $key = static::search($value);
 
         return static::byKey($key);
@@ -60,7 +96,7 @@ abstract class Enum
             throw new InvalidArgumentException("{$const} not defined");
         }
 
-        self::$instances[static::class][$key] = new static($constants[$key]);
+        self::$instances[static::class][$key] = new static($key, $constants[$key]);
 
         return self::$instances[static::class][$key];
     }
@@ -87,19 +123,22 @@ abstract class Enum
         return self::$cache[$class];
     }
 
-    final private function __construct(string|int|float $value)
+    final private function __construct(string $key, string|int|float $value)
     {
-        $this->value = $value;
+        $this->name = $key;
+        $this->value = (string) $value;
+
+        $this->internalValue = $value;
     }
 
     public function getKey(): string
     {
-        return static::search($this->value);
+        return $this->name;
     }
 
     public function getValue(): string|int|float
     {
-        return $this->value;
+        return $this->internalValue;
     }
 
     public function equals(self $enum): bool
