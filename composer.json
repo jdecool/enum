@@ -19,7 +19,10 @@
     "autoload": {
         "psr-4": {
             "JDecool\\Enum\\": "src/"
-        }
+        },
+        "classmap": [
+            "stubs"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

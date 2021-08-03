@@ -14,9 +14,56 @@ use JDecool\Enum\{
 };
 use LogicException;
 use PHPUnit\Framework\TestCase;
+use ValueError;
 
 class EnumTest extends TestCase
 {
+    public function testNamedConstructorFrom(): void
+    {
+        $foo = PrivateEnum::from('foo_value');
+        static::assertInstanceOf(PrivateEnum::class, $foo);
+        static::assertSame(PrivateEnum::FOO(), $foo);
+
+        $first = IntegerEnum::from(1);
+        static::assertInstanceOf(IntegerEnum::class, $first);
+        static::assertSame(IntegerEnum::FIRST(), $first);
+    }
+
+    public function testNamedConstructorFromThrowsTypeValueExceptionOnUnknown(): void
+    {
+        $this->expectException(ValueError::class);
+
+        PrivateEnum::from('unknown');
+    }
+
+    public function testNamedConstructorTryFrom(): void
+    {
+        $foo = PrivateEnum::tryFrom('foo_value');
+        static::assertInstanceOf(PrivateEnum::class, $foo);
+        static::assertSame(PrivateEnum::FOO(), $foo);
+
+        static::assertNull(PrivateEnum::tryFrom('unknown_value'));
+
+        $first = IntegerEnum::tryFrom(1);
+        static::assertInstanceOf(IntegerEnum::class, $first);
+        static::assertSame(IntegerEnum::FIRST(), $first);
+
+        static::assertNull(IntegerEnum::tryFrom(42));
+    }
+
+    public function testCasesReturn(): void
+    {
+        static::assertEquals([
+            PublicEnum::FOO(),
+            PublicEnum::BAR(),
+        ], PublicEnum::cases());
+
+        static::assertEquals([
+            PrivateEnum::FOO(),
+            PrivateEnum::BAR(),
+        ], PrivateEnum::cases());
+    }
+
     public function testNamedConstructorOf(): void
     {
         $foo = PrivateEnum::of('foo_value');
