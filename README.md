@@ -6,6 +6,13 @@ Enum
 
 An another Enum implementation for PHP.
 
+## Deprecated
+
+⚠️ This project is no longer actively maintained.
+
+Native enum arrived to PHP in version 8.1: https://www.php.net/enumerations
+If your project is running PHP 8.1+ or your library has it as a minimum requirement you should use it instead of this library.
+
 ## Why ?
 
 Why creating an another enum package ?
